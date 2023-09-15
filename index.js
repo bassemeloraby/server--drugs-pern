@@ -11,8 +11,10 @@ app.use(cors());
 app.use(express.json()); //req.body
 app.use(express.urlencoded({ extended: false }));
 
-
-
+//test route
+app.get('/', (req, res) => {
+  res.send(`<h1>Hello World! . that is backend of drugs with PERN</h1>`);
+});
 
   app.listen(port, (err) => {
     if (err) throw err;
