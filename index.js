@@ -6,6 +6,7 @@ const pool = require("./db");
 
 const app = express();
 const port = process.env.PORT || '5000';
+const router = express.Router();
 
 //middleware
 app.use(cors());
@@ -13,69 +14,7 @@ app.use(express.json()); //req.body
 app.use(express.urlencoded({ extended: false }));
 
 //ROUTES//
-//create name
-app.post("/names", async (req, res) => {
-  try {
-    const { description } = req.body;
-    const newName = await pool.query(
-      "INSERT INTO name (description) VALUES($1) RETURNING *",
-      [description])
-
-      res.json(newName.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-//get all names
-app.get("/names", async (req, res) => {
-  try {
-    const allnames = await pool.query("SELECT * FROM name");
-    res.json(allnames.rows);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-//get name by id
-app.get("/names/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const name = await pool.query("SELECT * FROM name WHERE name_id = $1", [
-      id
-    ]);
-
-    res.json(name.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-//update name
-app.put("/names/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { description } = req.body;
-    const updateName = await pool.query(
-      "UPDATE name SET description = $1 WHERE name_id = $2",
-      [description, id]
-    );
-
-    res.json("Name was updated!");
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-
-//delete name by id
-app.delete("/names/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleteName = await pool.query("DELETE FROM name WHERE name_id = $1", [
-      id
-    ]);
-    res.json("name was deleted!");
-  } catch (err) {
-    console.log(err.message);
-  }
-});
+app.use('/api/names', require('./routes/nameRoutes'));
 
 //test route
 app.get('/', (req, res) => {
